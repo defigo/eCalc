@@ -1,0 +1,41 @@
+/* 1.0 Genral*/
+.cf::after {
+    content: "";
+    clear: both;
+    display: table;
+}
+
+/* 1.1 Font */
+html{font-size: 16px;}
+
+
+.yFont{color:yellow;}
+.rFont{color:red;}
+
+/* 2.0 Navigation*/
+
+/* 3.0 forms */
+input[type="number"]{width: 50px;}
+
+/* 3.2 Buttons */
+.btn{
+    padding: 5px;
+    background-color: #ccc;
+    cursor: pointer;
+    min-width: 50px;
+    max-width: 150px;
+}
+.btn:hover{
+    background-color: #999;
+    color: #fff;
+}
+
+/* AC Table */
+td.g{background-color: lightgreen}
+td.dkg{
+    background-color: green;
+    color: #fff;}
+td.o{background-color: orange}
+td.y{background-color: yellow}
+td.r{background-color: red}
+

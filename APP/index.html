@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>D&amp;D Encounter Calculator &amp; Analytics</title>
+    <meta name="description" content="The encounter Calculator takes the input from your parties information and compares it to the NPC that they may encounter">
+    <meta name="keywords" content="D&amp;D Action Economy, D&amp;D">
+    <meta name="author" content="Geoff Dean">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="master.style.css"/>
+    
+    <script type="application/ld+json">
+    { 
+		"@context": "http://schema.org", 
+		"@type": "game",
+		"numberOfPlayers": "1",
+		"url": "http://www.defigo.us/eCal/", 
+		"name": "Encounter Calculator",
+		"author": {
+			"@type": "Person",
+			"name": "Geoff Dean"
+		},
+		"description": "The encounter Calculator takes the input from your parties information and compares it to the NPC that they may encounter.",
+		"copyrightYear": "2018",
+		"datePublished": "2018-06-25",
+		"publisher": "publisher name",
+    }
+    </script>
+    <script src="JS/functions.js"></script>
+	<script src="JS/vue.js"></script>
+</head>
+<body>
+    <header class="main">
+        <h1>Encounter Calculator &amp; Analytics</h1>
+        <nav></nav>
+    </header>
+    <main id="app">
+        <article>
+            <header><h2>Player to Encounter <i class="fas fa-info-circle" title="about " @click="toggleAbout('p2e')"></i></h2></header>
+            <p v-show="show.moreInfo.p2e">This section informs the player to encounter attack ratio. It will fire a warning if the total encounters number of attacks are greater than that of the total players number of attacks.</p>
+            <p v-html="copmareNumATKs"></p>
+        </article>
+        <article id="players">
+            <header><h2>Player Actions AC Calculator</h2></header>
+            <div class="add btn" @click="addPlayer()">Add Player</div>
+            <section>
+                <header><h3>Party Overview</h3></header>            
+                <b>Party AC AVG:</b> {{acAVG('p')}}<br/>
+                <b>Party attack Total:</b> {{atkTotal('p')}}
+            </section>
+            <section>
+                <header><h3>AC Form and Chance to Hit Chart</h3></header>
+                <table class="chart">
+                    <tr><th>Name</th>
+                        <th>AC</th>
+                        <th>MOD</th>
+                        <th title="Nunber of attacks a player has">ATKs</th>
+                        <th>Level</th>
+                        <th></th>
+                        <th>10</th>
+                        <th>11</th>
+                        <th>12</th>
+                        <th>13</th>
+                        <th>14</th>
+                        <th>15</th>
+                        <th>16</th>
+                        <th>17</th>
+                        <th>18</th>
+                        <th>19</th>
+                        <th>20</th>
+                    </tr>
+                    <template v-for="player in players.info">
+                        <tr><td><input name="name" placeholder="Players Name" type="text" v-model="player.name"/></td>
+                            <td><input name="AC" placeholder="Players AC" type="number" v-model="player.AC"/></td>
+                            <td><input name="MOD" placeholder="Players attack Modifier" type="number" v-model="player.MOD" title="The players attack or spell modifire"/></td>
+                            <td><input name="atks" placeholder="Number of attacks" type="number" v-model="player.ATKs" title="Nunber of attacks a player has"/></td>
+                            <td><input name="lvl" placeholder="Player Level" type="number" v-model="player.lvl" title="The players curent level"/></td>
+                            <td><button class="remove" @click="removeCharcter(player,'p')" title="Remove this charcter">-</button></td>
+                            <td :class="acCal(2, player, 10, 'p')">{{acCal(1, player, 10, 'p')}}%</td>
+                            <td :class="acCal(2, player, 11, 'p')">{{acCal(1, player, 11, 'p')}}%</td>
+                            <td :class="acCal(2, player, 12, 'p')">{{acCal(1, player, 12, 'p')}}%</td>
+                            <td :class="acCal(2, player, 13, 'p')">{{acCal(1, player, 13, 'p')}}%</td>
+                            <td :class="acCal(2, player, 14, 'p')">{{acCal(1, player, 14, 'p')}}%</td>
+                            <td :class="acCal(2, player, 15, 'p')">{{acCal(1, player, 15, 'p')}}%</td>
+                            <td :class="acCal(2, player, 16, 'p')">{{acCal(1, player, 16, 'p')}}%</td>
+                            <td :class="acCal(2, player, 17, 'p')">{{acCal(1, player, 17, 'p')}}%</td>
+                            <td :class="acCal(2, player, 18, 'p')">{{acCal(1, player, 18, 'p')}}%</td>
+                            <td :class="acCal(2, player, 19, 'p')">{{acCal(1, player, 19, 'p')}}%</td>
+                            <td :class="acCal(2, player, 20, 'p')">{{acCal(1, player, 20, 'p')}}%</td>
+                        </tr>
+                    </template>
+                </table>
+            </section>
+            <section class="xpPoints">
+                <header><h3>XP to spend <i class="fas fa-info-circle" title="about " @click="toggleAbout('xp')"></i></h3></header>
+                <p v-show="show.moreInfo.xp">This section informs you how many experience points you can spend on an encounter. Please refer to pg.81 of the Dungeon Master's Guide.</p>
+                <p v-html="xpPointCal"></p>
+            </section>
+        </article>
+        
+        <article id="NPC">
+               <header><h2>Encounter AC Calculator</h2></header>
+            <div class="add btn" @click="addNPC()">Add NPC</div>
+            <b>Encounter AC AVG:</b> {{acAVG('n')}}<br/>
+            <b>Encounter attack Total:</b> {{atkTotal('n')}}
+            <table class="chart">
+                <tr><th>Name</th>
+                    <th>AC</th>
+                    <th>MOD</th>
+                    <th title="Nunber of attacks a encounter has">ATKs</th>
+                    <th>How Many</th>
+                    <th> </th>
+                    <th>10</th>
+                    <th>11</th>
+                    <th>12</th>
+                    <th>13</th>
+                    <th>14</th>
+                    <th>15</th>
+                    <th>16</th>
+                    <th>17</th>
+                    <th>18</th>
+                    <th>19</th>
+                    <th>20</th>
+                </tr>
+                <template v-for="npc in npcs.info">
+                    <tr><td><input name="name" placeholder="NPC's Name" type="text" v-model="npc.name"/></td>
+                        <td><input name="AC" placeholder="npcs AC" type="number" v-model="npc.AC"/></td>
+                        <td><input name="MOD" placeholder="npcs attack Modifier" type="number" v-model="npc.MOD" title="Encounters attack or spell modifire"/></td>
+                        <td><input name="atks" placeholder="Number of attacks" type="number" v-model="npc.ATKs" title="Encounters number of attacks. If it has multiple it is the number based on the multiple otherwise it is 1"/></td>
+                        <td><input name="q" placeholder="Number of NPC" type="number" v-model="npc.q" title="How many of this type of encounter"/></td>
+                        <td><button class="remove"  @click="removeCharcter(npc,'n')" title="Remove this encounter">-</button></td>
+                        <td :class="acCal(2, npc, 10, 'n')">{{acCal(1, npc, 10, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 11, 'n')">{{acCal(1, npc, 11, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 12, 'n')">{{acCal(1, npc, 12, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 13, 'n')">{{acCal(1, npc, 13, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 14, 'n')">{{acCal(1, npc, 14, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 15, 'n')">{{acCal(1, npc, 15, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 16, 'n')">{{acCal(1, npc, 16, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 17, 'n')">{{acCal(1, npc, 17, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 18, 'n')">{{acCal(1, npc, 18, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 19, 'n')">{{acCal(1, npc, 19, 'n')}}%</td>
+                        <td :class="acCal(2, npc, 20, 'n')">{{acCal(1, npc, 20, 'n')}}%</td>
+                    </tr>
+                </template>
+            </table>
+        </article>
+    </main>
+    <footer class="main"></footer>
+	
+	<script src="vue.data.js"></script>
+    <script src="JS/actions.js"></script>
+</body>
+</html>
